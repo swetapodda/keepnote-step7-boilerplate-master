@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: reminder-service  # Note: Sleuth is considering application.yml service name details, it takes from here. if we use logback.xml
+
+#logging.pattern.level: "%5p [${spring.zipkin.service.name:${spring.application.name:}},%X{traceId:-},%X{spanId:-},%X{key:-}]"

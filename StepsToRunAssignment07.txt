@@ -1,0 +1,92 @@
+Steps to execute Assignment 7
+
+*********************************
+SET UP  RABBIT MQ
+*********************************
+1) Install rabbit mq image using command at cmd
+	
+	docker pull rabbitmq
+
+2) run rabbitmq using following command or through docker-compose-rabbitmq.yml
+
+	- docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+	
+	- docker-compose -f docker-compose-rabbitmq.yml up
+	
+3) this will run the Rabbit MQ on 
+	
+	- http://127.0.0.1:15672/#/queues
+	- http://localhost:15672/#/queues
+	
+*********************************
+SET UP ZIPKIN
+*********************************
+
+1) Download Zipkin server jar from " https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec"
+
+2) Place the jar on location - C:\Git_Projects
+
+3) Open command prompt, go to jar file location and run the below command,
+
+	- SET RABBIT_URI=amqp://localhost
+	- java -jar zipkin-server-2.12.9-exec.jar
+	
+4) Zipkin server will be up now on 
+
+	- http://localhost:9411/
+	- http://127.0.0.1:9411/
+
+*********************************
+SET UP SERVICES - LOGBACK.XML
+*********************************
+
+1) Replace the logback.xml with new one, as current logback overrites the sleuth logger details.
+
+refer following link for more details
+	
+		- https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot/src/main/resources/org/springframework/boot/logging/logback/defaults.xml
+		- https://stackoverflow.com/questions/49702196/spring-boot-custom-logback-logger-to-file-only
+		
+2) Include below details
+	
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</layout>
+	</appender>
+	
+3) But adding this much will not be enough, "service-name" will be missing in the sleuth logs, so to add that part we need to add "bootstrap.yml" in resources folder
+
+	spring:
+		application:
+			name: category-service-bs
+			
+4) add above details in all the services.
+
+********************************
+SET UP aaplication.yml
+********************************
+1) Add rabbit mq poperty in yml file
+
+ #Rabbit MQ Server
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+	
+2) Add zipkin property
+
+	zipkin:
+    base-url: http://localhost:9411
+    locator:
+      discovery:
+        enable: true
+3) add below entries in zuul property file
+
+	spring.rabbitmq.host= 127.0.0.1
+	spring.rabbitmq.port= 5672
+	spring.rabbitmq.username= guest
+	spring.rabbitmq.password= guest

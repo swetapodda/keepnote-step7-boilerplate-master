@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/base.xml"/>
+	<!-- Example for logging into the build folder of your project -->
+
+	<property name="LOG_FILE_LOCATION" value="logs" />
+	<property name="LOG_FILE_NAME" value="KeepNote" />
+	<property name="LOG_FILE_EXTENSION" value=".log" />
+	<timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"
+		timeReference="contextBirth" />
+	<!--<timestamp key="bySecond" datePattern="yyyyMMdd" /> -->
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<layout class="ch.qos.logback.classic.PatternLayout">
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</layout>
+	</appender>
+	<appender name="FILE-AUDIT"
+		class="ch.qos.logback.core.FileAppender">
+		<file>${LOG_FILE_LOCATION}/${LOG_FILE_NAME}_${bySecond}${LOG_FILE_EXTENSION}</file>
+		<encoder
+			class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!-- <Pattern> %d{yyyy-MM-dd HH:mm:ss} - %msg%n </Pattern> -->
+			<pattern>${FILE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+	
+	<!-- Send logs to both console and file audit -->
+	<logger name="com.stackroute" level="info" additivity="false">
+		<appender-ref ref="FILE-AUDIT" />
+		<appender-ref ref="STDOUT" />
+	</logger>
+	<root level="INFO">
+		<appender-ref ref="FILE-AUDIT" />
+		<appender-ref ref="STDOUT" />
+	</root>
+</configuration>

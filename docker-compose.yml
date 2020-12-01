@@ -1,0 +1,110 @@
+# Dockerfile has been added in all micro-services, you need to dockerize all micro-services and add docker-compose.yml file
+version: "3.3"
+
+services:
+# MySQL Server Configuration
+  mysqlContainer:
+      image: mysql
+      restart: always
+      
+  #    volumes:
+  #      - ./mysql-dump:/docker-entrypoint-initdb.d
+      ports:
+        - "3306:3306"
+      environment:
+          MYSQL_USER: root
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: notesdb_06
+
+  # Authentication Service
+  auth-service:
+      image: auth-service_06   
+      ports:
+      - "9100:9100"
+      depends_on:
+      - mysqlContainer
+      environment: 
+          MYSQL_USER: root
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_URL:  jdbc:mysql://192.168.1.16:3306/notesdb_06
+          ZIPKIN_BASE_URL: http://192.168.1.16:9411/
+          EUREKA_SERVER_DEFAULT_ZONE: http://192.168.1.16:8761/eureka
+          HOST_NAME: 192.168.1.11 #This is in which Docer Server is running..
+
+  # Mongo DB Configuration
+  mongoDBServer:
+    image: mongo:latest
+  #    network_mode: host
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: notesdb_06
+
+  # UserService
+  user-service:
+    image: users-service_06
+    ports: 
+      - "9200:9200"
+    depends_on: 
+        - mongoDBServer
+    restart: always
+
+    environment: 
+      MONGO_HOST : mongoDBServer
+      MONGO_PORT: 27017
+      MONGO_DATABASE: notesdb_06
+      ZIPKIN_BASE_URL: http://192.168.1.16:9411/
+      EUREKA_SERVER_DEFAULT_ZONE: http://192.168.1.16:8761/eureka
+      HOST_NAME: 192.168.1.11 #This is in which Docer Server is running..
+
+  # NoteService
+  note-service:
+    image: note-service_06
+    ports: 
+      - "9300:9300"
+    depends_on: 
+        - mongoDBServer
+    restart: always
+
+    environment: 
+      MONGO_HOST : mongoDBServer
+      MONGO_PORT: 27017
+      MONGO_DATABASE: notesdb_06
+      ZIPKIN_BASE_URL: http://192.168.1.16:9411/
+      EUREKA_SERVER_DEFAULT_ZONE: http://192.168.1.16:8761/eureka
+      HOST_NAME: 192.168.1.11 #This is in which Docer Server is running..
+
+  # CategoryService
+  category-service:
+    image: category-service_06
+    ports: 
+      - "9400:9400"
+    depends_on: 
+        - mongoDBServer
+    restart: always
+
+    environment: 
+      MONGO_HOST : mongoDBServer
+      MONGO_PORT: 27017
+      MONGO_DATABASE: notesdb_06
+      ZIPKIN_BASE_URL: http://192.168.1.16:9411/
+      EUREKA_SERVER_DEFAULT_ZONE: http://192.168.1.16:8761/eureka
+      HOST_NAME: 192.168.1.11 #This is in which Docer Server is running..
+
+  # ReminderService
+  reminder-service:
+    image: reminder-service_06
+    ports: 
+      - "9500:9500"
+    depends_on: 
+        - mongoDBServer
+    restart: always
+
+    environment: 
+      MONGO_HOST : mongoDBServer
+      MONGO_PORT: 27017
+      MONGO_DATABASE: notesdb_06
+      ZIPKIN_BASE_URL: http://192.168.1.16:9411/
+      EUREKA_SERVER_DEFAULT_ZONE: http://192.168.1.16:8761/eureka
+      HOST_NAME: 192.168.1.11 #This is in which Docer Server is running..

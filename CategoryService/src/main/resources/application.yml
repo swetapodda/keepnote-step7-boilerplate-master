@@ -1,0 +1,29 @@
+spring:
+  data:
+    mongodb:
+     # username: admin
+     # password: password
+     database: notesdb_07
+     port: 27017
+     host: localhost
+  application:
+    name: category-service
+  zipkin:
+    base-url: http://127.0.0.1:9411/
+    locator:
+      discovery:
+        enable: true
+  #Rabbit MQ Server
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+server:
+  port: 9400
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true

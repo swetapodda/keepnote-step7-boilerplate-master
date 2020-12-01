@@ -1,0 +1,31 @@
+spring:
+  data:
+    mongodb:
+      #username: ${MONGO_USERNAME}
+      #password: ${MONGO_PASSWORD}
+      database: notesdb_07
+      port: 27017
+      host: localhost
+  application:
+    name: note-service
+  zipkin:
+    base-url: http://127.0.0.1:9411/  
+    enabled: true
+    locator:
+      discovery:
+        enabled: true
+    #Rabbit MQ Server
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+server:
+  port: 9300
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+ 
